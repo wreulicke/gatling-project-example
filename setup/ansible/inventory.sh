@@ -1,0 +1,2 @@
+#!/bin/bash
+aws ec2 describe-instances --filters "Name=tag:Name,Values=load-test" "Name=instance-state-name,Values=running" | jq '.Reservations | map(.Instances[] | .PublicIpAddress) | {"load-test": {"hosts": . }}'

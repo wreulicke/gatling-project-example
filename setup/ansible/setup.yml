@@ -1,0 +1,12 @@
+- hosts: load-test
+  user: ec2-user
+  tasks:
+    - name: copy jar
+      copy: 
+        src: ../../target/scala-2.12/gatling-project-example_2.12-0.1.0-SNAPSHOT.jar
+        dest: ~/load-test/lib/
+    - name: copy shell
+      copy:
+        src: ../../target/pack/bin/
+        dest: ~/load-test/bin/
+

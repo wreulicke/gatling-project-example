@@ -1,0 +1,48 @@
+{
+    "builders": [
+        {
+            "type": "amazon-ebs",
+            "region": "ap-northeast-1",
+            "source_ami": "{{user `source_ami`}}",
+            "instance_type": "t2.micro",
+            "ssh_username": "ec2-user",
+            "ssh_timeout": "5m",
+            "ami_name": "gatling-ami-{{timestamp}}",
+            "tags": {
+                "Name": "load-test",
+                "Base_AMI_ID": "{{ .SourceAMI }}",
+                "Base_AMI_NAME": "{{ .SourceAMIName }}"
+            }
+        }
+    ],
+    "provisioners": [
+        {
+            "type": "shell",
+            "inline": [
+                "sudo yum install java-1.8.0-openjdk-devel.x86_64 unbound jq -y",
+                "sudo systemctl enable unbound.service",
+                "echo '*  soft  nofile  65535' | sudo tee -a /etc/security/limits.conf",
+                "echo '*  hard  nofile  65535' | sudo tee -a /etc/security/limits.conf",
+                "sudo sed -i 's/PEERDNS=yes/PEERDNS=no/g' /etc/sysconfig/network-scripts/ifcfg-eth0",
+                "sudo sed -i 's/nameserver .*/nameserver 127.0.0.1/g' /etc/resolv.conf",
+                "mkdir -p ~/load-test/bin ~/load-test/lib ~/load-test/gclog ~/load-test/error ~/load-test/heapdump",
+                "echo 'net.ipv4.tcp_max_tw_buckets = 2000000' | sudo tee -a /etc/sysctl.conf",
+                "echo 'net.ipv4.ip_local_port_range = 10000 65000' | sudo tee -a /etc/sysctl.conf",
+                "echo 'net.core.somaxconn = 32768' | sudo tee -a /etc/sysctl.conf",
+                "echo 'net.core.netdev_max_backlog = 8192' | sudo tee -a /etc/sysctl.conf",
+                "echo 'net.ipv4.tcp_tw_reuse = 1' | sudo tee -a /etc/sysctl.conf",
+                "echo 'net.ipv4.tcp_fin_timeout = 10' | sudo tee -a /etc/sysctl.conf"
+            ]
+        },
+        {
+            "type": "file",
+            "source": "{{user `git_root`}}target/pack/bin/",
+            "destination": "~/load-test/bin/"
+        },
+        {
+            "type": "file",
+            "source": "{{user `git_root`}}target/pack/lib/",
+            "destination": "~/load-test/lib/"
+        }
+    ]
+}

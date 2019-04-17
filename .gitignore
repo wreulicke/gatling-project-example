@@ -1,0 +1,68 @@
+.DS_Store
+
+###################################################
+# Build artifacts
+bin/
+target/
+build/
+.gradle/
+classes/
+out/
+
+# for CI
+setup/elasticsearch
+
+###################################################
+# Build & deploy local configurations
+#     You can place your own build and deploy configuration in /env (and this is ignored)
+/env/*.gradle
+!/env/_*.gradle
+/env/*.json
+!/env/_*.json
+
+###################################################
+# IntelliJ metadata
+*.iml
+*.ipr
+*.iws
+.idea
+
+###################################################
+.factorypath
+.project
+.classpath
+.settings
+.apt_generated
+
+node_modules
+
+###################################################
+# Python
+.python-version
+__pycache__/
+venv
+*.py[cod]
+
+target
+.idea
+.settings
+.classpath
+.project
+
+environment.properties
+/environment.conf
+
+# Terraform
+.terraform/
+*.tfstate*
+*.tfvars*
+
+# Ansible
+*.retry
+
+# local
+working/
+tmp/
+ssh_config
+# gatling results
+results/
